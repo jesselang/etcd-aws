@@ -1,0 +1,28 @@
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/Sirupsen/logrus"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/aws/aws-sdk-go"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/coreos/etcd"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/coreos/go-etcd"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/crewjam/awsregion"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/crewjam/ec2cluster"
+
+[[dependencies]]
+  branch = "master"
+  name = "golang.org/x/net"
