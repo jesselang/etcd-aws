@@ -43,7 +43,7 @@ func handleLifecycleEvent(m *ec2cluster.LifecycleMessage) (shouldContinue bool, 
 		instance := ec2Resp.Reservations[0].Instances[0]
 		var health etcdHealth
 		for i := 0; i < 10; i++ {
-			resp, err := getApiResponse(*instance.PrivateIpAddress, *localInstance.InstanceId, "health", http.MethodGet)
+			resp, err := getApiResponse(getHost(instance, tlsClient), *localInstance.InstanceId, "health", http.MethodGet)
 			if err != nil {
 				if i == 10 {
 					log.Printf("health query failed; erroring")
@@ -73,7 +73,8 @@ func handleLifecycleEvent(m *ec2cluster.LifecycleMessage) (shouldContinue bool, 
 		return true, nil
 	case "autoscaling:EC2_INSTANCE_TERMINATING":
 		// look for the instance in the cluster
-		resp, err := getApiResponse(*localInstance.PrivateIpAddress, *localInstance.InstanceId, "members", http.MethodGet)
+		clientHost := getHost(localInstance, tlsClient)
+		resp, err := getApiResponse(clientHost, *localInstance.InstanceId, "members", http.MethodGet)
 		if err != nil {
 			return false, err
 		}
@@ -98,7 +99,7 @@ func handleLifecycleEvent(m *ec2cluster.LifecycleMessage) (shouldContinue bool, 
 			"MemberID":   memberID}).Info("removing from cluster")
 
 		for i := 0; i < 10; i++ {
-			resp, err = getApiResponse(*localInstance.PrivateIpAddress, *localInstance.InstanceId, fmt.Sprintf("members/%s", memberID), http.MethodDelete)
+			resp, err = getApiResponse(clientHost, *localInstance.InstanceId, fmt.Sprintf("members/%s", memberID), http.MethodDelete)
 			if err != nil {
 				if i == 10 {
 					log.Printf("delete member failed; erroring")
